@@ -13,7 +13,7 @@ function route(fastify) {
 
   fastify.route({
     method: 'GET',
-    url: '/map/leaflet',
+    url: '/map/openlayers',
 
     // No beforeHandler for map control pages.
     handler: view
@@ -22,7 +22,7 @@ function route(fastify) {
   // Required for 3rd party developers to build their own security model with XYZ ACL.
   fastify.route({
     method: 'POST',
-    url: '/map/leaflet',
+    url: '/map/openlayers',
     handler: (req, res) => require(global.appRoot + '/routes/auth/login').post(req, res, fastify)
   });
 
@@ -43,7 +43,7 @@ async function view(req, res, token = { access: 'public' }) {
     title: config.title || 'GEOLYTIX | XYZ',
     nanoid: nanoid(6),
     token: token.signed,
-    engine: 'leaflet'
+    engine: 'openlayers'
   }));
 
 }

@@ -6,7 +6,7 @@
     <link rel="icon" type="image/x-icon" href="{{:dir}}/favicon.ico" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{{:dir}}/css/views/leaflet.css" />
+    <link rel="stylesheet" href="{{:dir}}/css/views/{{:engine}}.css" />
     <link rel="stylesheet" href="{{:dir}}/css/views/map.css" />
 </head>
 
@@ -49,7 +49,7 @@
 
 </body>
 
-<script src="{{:dir}}/js/{{:bundle_js}}"></script>
-<script src="{{:dir}}/js/{{:script_js}}"></script>
+<script src="{{:dir}}/js/build/lib_{{:engine}}_bundle.js"></script>
+<script src="{{:dir}}/js/views/map_{{:engine}}.js"></script>
 
 </html>
