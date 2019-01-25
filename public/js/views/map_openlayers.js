@@ -2,22 +2,33 @@
 //   window.history.replaceState( null, null, window.location.href );
 // }
 
-// _xyz().init({
-//   host: document.head.dataset.dir,
-//   //token: API token,
-//   map_id: 'xyz_map1',
-//   locale: 'GB',
-//   scrollWheelZoom: true,
-//   view: {
-//     lat: 51.52,
-//     lng: 0.24,
-//     z: 12,
-//   },
-//   btnZoomIn: document.getElementById('btnZoomIn1'),
-//   btnZoomOut: document.getElementById('btnZoomOut1'),
-//   callback: Grid
-// });
+_xyz().init({
+  host: document.head.dataset.dir,
+  //token: API token,
+  map_id: 'xyz_map1',
+  locale: 'GB',
+  scrollWheelZoom: true,
+  view: {
+    lat: 51.5073,
+    lng: -0.12755,
+    z: 10,
+  },
+  bounds: {
+    north: 51.686,
+    east: 0.236,
+    south: 51.28,
+    west: -0.489
+  },
+  minZoom: 10,
+  maxZoom: 17,
+  showScaleBar: true,
+  maskBounds: true,
+  btnZoomIn: document.getElementById('btnZoomIn1'),
+  btnZoomOut: document.getElementById('btnZoomOut1'),
+  callback: Grid
+});
 
+/*
 _xyz().init({
   host: document.head.dataset.dir,
   //token: API token,
@@ -27,6 +38,7 @@ _xyz().init({
   btnZoomOut: document.getElementById('btnZoomOut1'),
   callback: mvt_select
 });
+*/
 
 _xyz().init({
   host: document.head.dataset.dir,

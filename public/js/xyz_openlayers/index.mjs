@@ -4,11 +4,14 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
-
-/*
-import L from 'leaflet';
-
-import 'leaflet.vectorgrid';
+import {defaults} from 'ol/interaction';
+import * as proj from 'ol/proj';
+import {ScaleLine} from 'ol/control.js';
+import {Feature} from 'ol';
+import {Polygon} from 'ol/geom';
+import {Vector as VectorSource} from 'ol/source';
+import {Vector as VectorLayer} from 'ol/layer';
+import * as style from 'ol/style';
 
 import * as utils from '../utils/_utils.mjs';
 
@@ -18,6 +21,7 @@ import getWorkspace from './src/getWorkspace.mjs';
 
 import attribution from './src/attribution.mjs';
 
+/**
 import _layer from './src/layer/_layer.mjs';
 
 import _location from './src/location/_location.mjs';
@@ -39,10 +43,14 @@ export default () => {
   _xyz.ol.View = View;
   _xyz.ol.TileLayer = TileLayer;
   _xyz.ol.XYZ = XYZ;
-
-
-  /*
-  _xyz.L = L;
+  _xyz.ol.interactionDefaults = defaults;
+  _xyz.ol.proj = proj;
+  _xyz.ol.ScaleLine = ScaleLine;
+  _xyz.ol.Feature = Feature;
+  _xyz.ol.Polygon = Polygon;
+  _xyz.ol.VectorLayer = VectorLayer;
+  _xyz.ol.VectorSource = VectorSource;
+  _xyz.ol.style = style;
 
   _xyz.utils = utils;
 
@@ -52,6 +60,7 @@ export default () => {
 
   getWorkspace(_xyz);
 
+  /**
   _layer(_xyz);
 
   _location(_xyz);

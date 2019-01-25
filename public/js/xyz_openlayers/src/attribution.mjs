@@ -35,8 +35,8 @@ export default _xyz => {
       tag: 'a',
       options: {
         classList: 'leaflet',
-        innerHTML: '<i class="material-icons">favorite</i> Leaflet',
-        href: 'https://leafletjs.com',
+        innerHTML: '<i class="material-icons">favorite</i> OpenLayers',
+        href: 'https://openlayers.org/',
         target: '_blank'
       },
       appendTo: attribution_links
