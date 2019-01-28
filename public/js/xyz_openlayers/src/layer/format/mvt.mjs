@@ -33,6 +33,7 @@ export default (_xyz, layer) => () => {
     token: _xyz.token
   });
 
+  /**
   let options = {
     rendererFactory: _xyz.L.svg.tile,
     interactive: (layer.qID) || false,
@@ -43,6 +44,7 @@ export default (_xyz, layer) => () => {
 
     // set style for each layer
   options.vectorTileLayerStyles[layer.key] = applyLayerStyle;
+  **/
 
   // Create cat array for graduated theme.
   if (layer.style.theme && layer.style.theme.type === 'graduated') {
@@ -52,6 +54,16 @@ export default (_xyz, layer) => () => {
   // Remove layer.
   if (layer.L) _xyz.map.removeLayer(layer.L);
 
+  var vectorSource = new _xyz.ol.source.VectorTile({
+    format: new _xyz.ol.format.MVT(),
+    url: url
+  });
+  var vectorLayer = new _xyz.ol.layer.VectorTile({
+    source: vectorSource
+  });
+  _xyz.map.addLayer(vectorLayer);
+  
+  /**
   layer.L = L.vectorGrid.protobuf(url, options)
     .on('error', err => console.error(err))
     .on('loading', () => {
@@ -107,6 +119,7 @@ export default (_xyz, layer) => () => {
       e.target.setFeatureStyle(e.layer.properties.id, applyLayerStyle);
     })
     .addTo(_xyz.map);
+  **/
 
   function applyLayerStyle(properties) {
 

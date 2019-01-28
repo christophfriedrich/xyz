@@ -9,9 +9,10 @@ import * as proj from 'ol/proj';
 import {ScaleLine} from 'ol/control.js';
 import {Feature} from 'ol';
 import {Polygon} from 'ol/geom';
-import {Vector as VectorSource} from 'ol/source';
-import {Vector as VectorLayer} from 'ol/layer';
+import * as source from 'ol/source';
 import * as style from 'ol/style';
+import * as format from 'ol/format';
+import * as layer from 'ol/layer';
 
 import * as utils from '../utils/_utils.mjs';
 
@@ -21,17 +22,19 @@ import getWorkspace from './src/getWorkspace.mjs';
 
 import attribution from './src/attribution.mjs';
 
-/**
 import _layer from './src/layer/_layer.mjs';
 
+/**
 import _location from './src/location/_location.mjs';
 
 import _draw from './src/draw/_draw.mjs';
+**/
 
 import loadLocale from './src/loadLocale.mjs';
 
+/**
 import locate from './src/locate.mjs';
-*/
+**/
 import init from './src/init.mjs';
 
 export default () => {
@@ -48,9 +51,10 @@ export default () => {
   _xyz.ol.ScaleLine = ScaleLine;
   _xyz.ol.Feature = Feature;
   _xyz.ol.Polygon = Polygon;
-  _xyz.ol.VectorLayer = VectorLayer;
-  _xyz.ol.VectorSource = VectorSource;
+  _xyz.ol.source = source;
   _xyz.ol.style = style;
+  _xyz.ol.format = format;
+  _xyz.ol.layer = layer;
 
   _xyz.utils = utils;
 
@@ -60,15 +64,17 @@ export default () => {
 
   getWorkspace(_xyz);
 
-  /**
   _layer(_xyz);
+  /**
 
   _location(_xyz);
 
   _draw(_xyz);
+  */
 
   loadLocale(_xyz);
 
+  /**
   locate(_xyz);
   */
   init(_xyz);

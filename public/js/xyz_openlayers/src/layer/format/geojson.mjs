@@ -42,7 +42,7 @@ export default (_xyz, layer) => () => {
     layer.L = _xyz.L.geoJSON(features, {
       style: applyLayerStyle,
       pane: layer.key,
-      interactive: layer.infoj? true: false,
+      interactive: layer.qID ? true : false,
       pointToLayer: (point, latlng) => {
           
         let style = applyLayerStyle(point);

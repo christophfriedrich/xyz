@@ -15,7 +15,12 @@ export default (_xyz, layer) => () => {
     layer.URI;
 
     // Assign the tile layer to the layer L object and add to map.
-  layer.L = L.tileLayer(uri, {
+  layer.L = new _xyz.ol.layer.Tile({
+    source: new _xyz.ol.source.XYZ({url: uri})
+  });
+  _xyz.map.addLayer(layer.L);
+
+  /**
     updateWhenIdle: true,
     pane: layer.key
   })
@@ -24,6 +29,6 @@ export default (_xyz, layer) => () => {
       if (layer.loader)  layer.loader.style.display = 'none';
 
     })
-    .addTo(_xyz.map);
+  **/
 
 };

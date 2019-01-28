@@ -28,7 +28,7 @@ export default _xyz => {
 
       let
         table,
-        zoom = _xyz.map.getZoom(),
+        zoom = _xyz.map.getView().getZoom(),
         zoomKeys = Object.keys(layer.tables),
         minZoomKey = parseInt(zoomKeys[0]),
         maxZoomKey = parseInt(zoomKeys[zoomKeys.length - 1]);
@@ -127,8 +127,10 @@ export default _xyz => {
 
     }
 
+    /**
     _xyz.panes.list.push(_xyz.map.createPane(layer.key));
     _xyz.map.getPane(layer.key).style.zIndex = _xyz.panes.next++;
+    **/
     
     if (layer.format === 'mvt') layer.get = format_mvt(_xyz, layer);
 
@@ -149,6 +151,16 @@ export default _xyz => {
 
     if (!params.json) return;
 
+    var vectorSource = new _xyz.ol.source.Vector({
+      features: (new _xyz.ol.format.GeoJSON()).readFeatures(params.json)
+    });
+    var vectorLayer = new _xyz.ol.layer.Vector({
+      source: vectorSource,
+      style: params.style
+    });
+    _xyz.map.addLayer(vectorLayer);
+
+    /**
     if (!params.icon) return _xyz.L.geoJson(params.json, {
       interactive: params.interactive || false,
       pane: params.pane || 'default',
@@ -169,6 +181,7 @@ export default _xyz => {
       }),
       style: params.style || {}
     }).addTo(_xyz.map);
+    **/
 
   };
 

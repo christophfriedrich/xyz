@@ -46,13 +46,6 @@ export default _xyz => {
       // Create OpenLayers Map object
       _xyz.map = new _xyz.ol.Map({
         target: params.map_id,
-        layers: [
-          new _xyz.ol.TileLayer({
-            source: new _xyz.ol.XYZ({
-              url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-            })
-          })
-        ],
         interactions: _xyz.ol.interactionDefaults({ mouseWheelZoom: params.scrollWheelZoom || false }),
         controls: [],
         view: new _xyz.ol.View({
@@ -79,14 +72,17 @@ export default _xyz => {
         // Grey out area outside bbox
         const world = [[90,180], [90,-180], [-90,-180], [-90,180]].map(c => c.reverse()); // coordinate order in OL: long,lat
         const bbox = [[locale.bounds.north,locale.bounds.east], [locale.bounds.north,locale.bounds.west], [locale.bounds.south,locale.bounds.west], [locale.bounds.south,locale.bounds.east]].map(c => c.reverse());
+        // in OpenLayers the first coordinate must be repeated in the end
+        world.push(world[0]);
+        bbox.push(bbox[0]);
         const style = new _xyz.ol.style.Style({
           stroke: new _xyz.ol.style.Stroke({width: 1}),  // width=0 doesn't work for some reason...
           fill: new _xyz.ol.style.Fill({color: [204, 204, 204, 0.8]})  // corresponds to #cccccc
         });
         const worldWithHole = new _xyz.ol.Polygon([world, bbox]).transform('EPSG:4326', 'EPSG:3857');
         const feature = new _xyz.ol.Feature(worldWithHole);
-        const source = new _xyz.ol.VectorSource({ features: [feature] });
-        const layer = new _xyz.ol.VectorLayer({ source: source, style: style });
+        const source = new _xyz.ol.source.Vector({ features: [feature] });
+        const layer = new _xyz.ol.layer.Vector({ source: source, style: style });
         _xyz.map.addLayer(layer);
       }
 
@@ -112,10 +108,10 @@ export default _xyz => {
         Object.values(_xyz.layers.list).forEach(layer => layer.get());
       }
 
-      /**
       // Load locale.
       _xyz.loadLocale(locale);
 
+      /**
       // Continue with callback if provided.
       if (params.callback) params.callback(_xyz);
       */
