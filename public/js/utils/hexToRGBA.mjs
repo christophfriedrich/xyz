@@ -1,4 +1,4 @@
-export function hexToRGBA(hex, opacity) {
+export function hexToRGBA(hex, opacity, asArray = false) {
   
   let rgb = (function(res) {
 
@@ -10,6 +10,10 @@ export function hexToRGBA(hex, opacity) {
       
   }(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)));
 
+  if(asArray) {
+    return rgb ? [rgb[0], rgb[1], rgb[2], opacity] : [0,0,0,0];
+  }
+  
   return rgb ? `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`: '';
     
 }

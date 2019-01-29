@@ -28,4 +28,6 @@ export {hexToRGBA} from './hexToRGBA.mjs';
 
 export {datePicker, formatDate, formatDateTime, meltDateStr} from './datePicker.mjs';
 
+export {convertStyleToOpenLayers} from './convertStyleToOpenLayers.mjs';
+
 export const compose = (...fns) => () => fns.forEach(f=>f());

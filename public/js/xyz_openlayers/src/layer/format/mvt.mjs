@@ -58,28 +58,46 @@ export default (_xyz, layer) => () => {
     format: new _xyz.ol.format.MVT(),
     url: url
   });
-  var vectorLayer = new _xyz.ol.layer.VectorTile({
-    source: vectorSource
+  layer.L = new _xyz.ol.layer.VectorTile({
+    source: vectorSource,
+    style: feature => _xyz.utils.convertStyleToOpenLayers(applyLayerStyle(feature))
   });
-  _xyz.map.addLayer(vectorLayer);
+  _xyz.map.addLayer(layer.L);
   
   /**
-  layer.L = L.vectorGrid.protobuf(url, options)
     .on('error', err => console.error(err))
-    .on('loading', () => {
+  **/
       
-      if (layer.loader) layer.loader.style.display = 'block';
+  layer.L.on('render', () => {
+    if (layer.loader) layer.loader.style.display = 'block';
+  });
 
-    })
-    .on('load', () => {
-     
-      if (layer.loader)  layer.loader.style.display = 'none';
+  layer.L.on('rendercomplete', () => {
 
-      if (layer.attribution) _xyz.attribution.set(layer.attribution);
+    if (layer.loader)  layer.loader.style.display = 'none';
 
-      layer.loaded = true;
+    if (layer.attribution) _xyz.attribution.set(layer.attribution);
 
-    })
+    layer.loaded = true;
+  });
+
+  // MVT layers don't support the normal "select" interaction, so we have to use a workaround: get the features at the clicked pixel
+  _xyz.map.on('click', event => {
+    var features = _xyz.map.getFeaturesAtPixel(event.pixel);
+    
+    if (!features) {
+      return;
+    }
+    
+    var feature = features[0];
+    var fid = feature.get('id');
+    layer.selected.push(fid);
+
+    // force redraw of layer style
+    layer.L.setStyle(layer.L.getStyle());
+  });
+
+  /**
     .on('click', e => {
 
       if (layer.singleSelectOnly) {
@@ -118,12 +136,11 @@ export default (_xyz, layer) => () => {
     .on('mouseout', e => {
       e.target.setFeatureStyle(e.layer.properties.id, applyLayerStyle);
     })
-    .addTo(_xyz.map);
   **/
 
   function applyLayerStyle(properties) {
 
-    let style = Object.assign({}, layer.style.default, layer.selected.includes(properties.id) ? layer.style.selected : {});
+    let style = Object.assign({}, layer.style.default, layer.selected.includes(properties.get('id')) ? layer.style.selected : {});
 
     // Return default style if no theme is set on layer.
     if (!layer.style.theme) return style;

@@ -13,6 +13,8 @@ import * as source from 'ol/source';
 import * as style from 'ol/style';
 import * as format from 'ol/format';
 import * as layer from 'ol/layer';
+import * as interaction from 'ol/interaction';
+import * as condition from 'ol/events/condition';
 
 import * as utils from '../utils/_utils.mjs';
 
@@ -55,6 +57,8 @@ export default () => {
   _xyz.ol.style = style;
   _xyz.ol.format = format;
   _xyz.ol.layer = layer;
+  _xyz.ol.interaction = interaction;
+  _xyz.ol.condition = condition;
 
   _xyz.utils = utils;
 
@@ -70,7 +74,7 @@ export default () => {
   _location(_xyz);
 
   _draw(_xyz);
-  */
+  **/
 
   loadLocale(_xyz);
 
