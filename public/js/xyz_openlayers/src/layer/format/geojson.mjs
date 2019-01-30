@@ -31,7 +31,10 @@ export default (_xyz, layer) => () => {
     if (e.target.status !== 200 || !layer.display) return;
         
     // Create feature collection for vector features.
-    const features = e.target.response;
+    const geojson = {
+      type: 'FeatureCollection',
+      features: e.target.response
+    };
 
     layer.loaded = true;
 
@@ -39,8 +42,15 @@ export default (_xyz, layer) => () => {
     if (layer.style.theme) layer.style.theme.cat_arr = Object.entries(layer.style.theme.cat);
   
     // Add geoJSON feature collection to the map.
-    layer.L = _xyz.L.geoJSON(features, {
-      style: applyLayerStyle,
+    const formatReader = new _xyz.ol.format.GeoJSON();
+    const features = formatReader.readFeatures(geojson, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
+    layer.L = new _xyz.ol.layer.Vector({
+      source: new _xyz.ol.source.Vector({ features: features }),
+      style: feature => _xyz.utils.convertStyleToOpenLayers(applyLayerStyle(feature))
+    });
+    _xyz.map.addLayer(layer.L);
+
+    /**
       pane: layer.key,
       interactive: layer.qID ? true : false,
       pointToLayer: (point, latlng) => {
@@ -59,6 +69,9 @@ export default (_xyz, layer) => () => {
           
       }
     })
+    **/
+
+    /**
       .on('click', e => {
 
         const id = e.layer.feature.properties.id;
@@ -110,7 +123,7 @@ export default (_xyz, layer) => () => {
       .on('mouseout', e => {
         e.layer.setStyle && e.layer.setStyle(applyLayerStyle(e.layer.feature));
       })
-      .addTo(_xyz.map);
+    **/
           
     // Check whether layer.display has been set to false during the drawing process and remove layer from map if necessary.
     if (!layer.display) _xyz.map.removeLayer(layer.L);
@@ -122,7 +135,7 @@ export default (_xyz, layer) => () => {
   
   function applyLayerStyle(feature){
 
-    let style = Object.assign({}, layer.style.default, layer.selected.includes(feature.properties.id) ? layer.style.selected : {});
+    let style = Object.assign({}, layer.style.default, layer.selected.has(feature.get('id')) ? layer.style.selected : {});
 
     // Return default style if no theme is set on layer.
     if (!layer.style.theme) return style;
@@ -132,7 +145,7 @@ export default (_xyz, layer) => () => {
     // Categorized theme.
     if (theme.type === 'categorized') {
 
-      return Object.assign({}, style, theme.cat[feature.properties.cat] || {});
+      return Object.assign({}, style, theme.cat[feature.get('cat')] || {});
     
     }
 
@@ -145,7 +158,7 @@ export default (_xyz, layer) => () => {
       for (let i = 0; i < theme.cat_arr.length; i++) {
     
         // Break iteration is cat value is below current cat array value.
-        if (parseFloat(feature.properties.cat) < parseFloat(theme.cat_arr[i][0])) break;
+        if (parseFloat(feature.get('cat')) < parseFloat(theme.cat_arr[i][0])) break;
     
         // Set cat_style to current cat style after value check.
         theme.cat_style = theme.cat_arr[i][1];

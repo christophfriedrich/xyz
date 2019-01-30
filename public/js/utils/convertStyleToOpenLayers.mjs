@@ -1,8 +1,22 @@
-import {Style, Fill, Stroke} from 'ol/style';
+import {Style, Fill, Stroke, Icon} from 'ol/style';
 import {hexToRGBA} from './hexToRGBA.mjs';
+import {default as svg_symbols} from './svg_symbols.mjs';
 
 export function convertStyleToOpenLayers(styleObject) {
   
+  if(styleObject.marker) {
+    const scale = (styleObject.marker.iconSize || 40) / 1000;
+    return new Style({
+      image: new Icon({
+        src: svg_symbols(styleObject.marker),
+        scale: scale,
+        anchor: (styleObject.marker.iconAnchor || [20, 40]).map(x => x/scale),
+        anchorXUnits: 'pixels',
+        anchorYUnits: 'pixels'
+      })
+    });
+  }
+
   return new Style({
     fill: styleObject.fill === false ? undefined : new Fill({
       color: hexToRGBA(styleObject.fillColor, styleObject.fillOpacity || 1, true)

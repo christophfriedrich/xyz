@@ -44,7 +44,8 @@ _xyz().init({
   host: document.head.dataset.dir,
   //token: API token,
   map_id: 'xyz_map2',
-  locale: 'NE',
+  locale: 'Offices',
+  scrollWheelZoom: true,
   btnZoomIn: document.getElementById('btnZoomIn2'),
   btnZoomOut: document.getElementById('btnZoomOut2'),
   callback: mvt_select2
