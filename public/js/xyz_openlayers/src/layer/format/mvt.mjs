@@ -83,15 +83,25 @@ export default (_xyz, layer) => () => {
 
   // MVT layers don't support the normal "select" interaction, so we have to use a workaround: get the features at the clicked pixel
   _xyz.map.on('click', event => {
-    var features = _xyz.map.getFeaturesAtPixel(event.pixel);
+
+    // layerFilter makes sure we only search within layer.L and not any overlapping layers
+    var features = _xyz.map.getFeaturesAtPixel(event.pixel, {layerFilter: candidate => candidate == layer.L});
     
     if (!features) {
       return;
     }
     
-    var feature = features[0];
-    var fid = feature.get('id');
-    layer.selected.push(fid);
+    const id = features[0].get('id');
+    
+    if (layer.singleSelectOnly) {
+      layer.selected = new Set([id]);
+    } else {
+      if(layer.selected.has(id)) {
+        layer.selected.delete(id);
+      } else {
+        layer.selected.add(id);
+      }
+    }
 
     // force redraw of layer style
     layer.L.setStyle(layer.L.getStyle());
@@ -140,7 +150,7 @@ export default (_xyz, layer) => () => {
 
   function applyLayerStyle(properties) {
 
-    let style = Object.assign({}, layer.style.default, layer.selected.includes(properties.get('id')) ? layer.style.selected : {});
+    let style = Object.assign({}, layer.style.default, layer.selected.has(properties.get('id')) ? layer.style.selected : {});
 
     // Return default style if no theme is set on layer.
     if (!layer.style.theme) return style;

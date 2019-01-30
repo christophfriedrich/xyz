@@ -61,6 +61,8 @@ export default (_xyz, layer) => () => {
     })
       .on('click', e => {
 
+        const id = e.layer.feature.properties.id;
+
         if (layer.singleSelectOnly) {
 
           layer.L.getLayers().forEach(l => {
@@ -71,15 +73,15 @@ export default (_xyz, layer) => () => {
             }));
           });
 
-          layer.selected = [e.layer.feature.properties.id];
+          layer.selected = new Set([id]);
 
         } else {
 
-          let selectedIdx = layer.selected.indexOf(e.layer.feature.properties.id);
-          
-          selectedIdx >= 0 ?
-            layer.selected.splice(selectedIdx, 1) :
-            layer.selected.push(e.layer.feature.properties.id);
+          if(layer.selected.has(id)) {
+            layer.selected.delete(id);
+          } else {
+            layer.selected.add(id);
+          }
 
         }
           
