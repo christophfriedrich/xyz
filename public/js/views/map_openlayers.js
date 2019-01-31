@@ -6,7 +6,7 @@ _xyz().init({
   host: document.head.dataset.dir,
   //token: API token,
   map_id: 'xyz_map1',
-  locale: 'NE',
+  locale: 'GB',
   scrollWheelZoom: true,
   view: {
     lat: 51.5073,

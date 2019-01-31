@@ -27,7 +27,7 @@ export default (_xyz, layer) => () => {
   const filter = layer.filter && Object.assign({}, layer.filter.legend, layer.filter.current);
   
   // Get bounds for request.
-  const bounds = _xyz.map.getBounds();
+  const bounds = _xyz.ol.proj.transformExtent(_xyz.map.getView().calculateExtent(_xyz.map.getSize()), 'EPSG:3857', 'EPSG:4326');
 
   if (layer.xhr) {
     layer.xhr.abort();
@@ -48,10 +48,10 @@ export default (_xyz, layer) => () => {
     cat: layer.style.theme && layer.style.theme.field,
     size: layer.style.theme && layer.style.theme.size,
     filter: JSON.stringify(filter),
-    west: bounds.getWest(),
-    south: bounds.getSouth(),
-    east: bounds.getEast(),
-    north: bounds.getNorth(),
+    west: bounds[0],
+    south: bounds[1],
+    east: bounds[2],
+    north: bounds[3],
     token: _xyz.token
   }));
 
@@ -83,16 +83,31 @@ export default (_xyz, layer) => () => {
       layer.style.theme.cat_arr = Object.entries(layer.style.theme.cat).sort((a, b) => parseFloat(a[0]) - parseFloat(b[0]));
     }
     
-    // Add cluster as point layer to Leaflet.
+    // Add cluster as VectorLayer with lots of Point features.
+    const features = cluster.map(f => new _xyz.ol.Feature({
+      geometry: new _xyz.ol.geom.Point(_xyz.ol.proj.fromLonLat([f.geometry.coordinates[0], f.geometry.coordinates[1]], 'EPSG:3857')),
+      properties: f.properties
+    }));
+    layer.L = new _xyz.ol.layer.Vector({
+      source: new _xyz.ol.source.Vector({ features: features }),
+      style: feature => _xyz.utils.convertStyleToOpenLayers(applyMarkerStyle(feature), feature)
+    });
+    _xyz.map.addLayer(layer.L);
+
+    /**
     layer.L = _xyz.L.geoJson(cluster, {
       pointToLayer: (point, latlng) => {
+      **/
         
+    let applyMarkerStyle = (point) => {
+      {
+        const latlng = undefined;  // dummy
         param.marker = layer.style.marker;
 
         // Set tooltip for desktop if corresponding layer has hover property.
         // let tooltip = (layer.style.theme && layer.style.theme.hover && _xyz.view.mode === 'desktop') || false;
 
-        if(point.properties.size > 1) param.marker = layer.style.markerMulti;
+        if(point.get('properties').size > 1) param.marker = layer.style.markerMulti;
 
         // Return marker if no theme is set.
         if (!layer.style.theme) return marker(latlng, layer, point, param);
@@ -102,7 +117,7 @@ export default (_xyz, layer) => () => {
         if (layer.style.theme.type === 'categorized') {
 
           // Get cat style from theme if cat is defined.
-          param.cat_style = layer.style.theme.cat[point.properties.cat] || {};
+          param.cat_style = layer.style.theme.cat[point.get('properties').cat] || {};
 
           // Assign marker from base & cat_style.
           param.marker = Object.assign({}, param.marker, param.cat_style);
@@ -119,7 +134,7 @@ export default (_xyz, layer) => () => {
           for (let i = 0; i < layer.style.theme.cat_arr.length; i++) {
     
             // Break iteration is cat value is below current cat array value.
-            if (point.properties.cat < parseFloat(layer.style.theme.cat_arr[i][0])) break;
+            if (point.get('properties').cat < parseFloat(layer.style.theme.cat_arr[i][0])) break;
     
             // Set cat_style to current cat style after value check.
             param.cat_style = layer.style.theme.cat_arr[i][1];
@@ -136,7 +151,7 @@ export default (_xyz, layer) => () => {
         if (layer.style.theme.type === 'competition') {
 
           // Set counter for point to 0.
-          let size = point.properties.size;
+          let size = point.get('properties').size;
 
           // Create a new cat_style with an empty layers object to store the competition layers.
           param.cat_style = {
@@ -144,8 +159,8 @@ export default (_xyz, layer) => () => {
           };
 
           // Iterate through cats in competition theme.
-          //Object.keys(point.properties.cat).forEach(comp => {
-          Object.entries(point.properties.cat).sort((a, b) => a[1] - b[1]).forEach(comp => {
+          //Object.keys(point.get('properties').cat).forEach(comp => {
+          Object.entries(point.get('properties').cat).sort((a, b) => a[1] - b[1]).forEach(comp => {
 
             // Check for the competition cat in point properties.
             if (layer.style.theme.cat[comp[0]]) {
@@ -153,7 +168,7 @@ export default (_xyz, layer) => () => {
               // Add a cat layer to the marker obkject.
               // Calculate the size of the competition layer.
               // Competition layer added first must be largest.
-              param.cat_style.layers[size / point.properties.size] = layer.style.theme.cat[comp[0]].fillColor;
+              param.cat_style.layers[size / point.get('properties').size] = layer.style.theme.cat[comp[0]].fillColor;
 
             }
             
@@ -169,7 +184,9 @@ export default (_xyz, layer) => () => {
         }
             
       }
-    })
+    };
+
+    /**
       .on('click', e => {
         let
           count = e.layer.feature.properties.count,
@@ -212,30 +229,36 @@ export default (_xyz, layer) => () => {
         xhr.send();
       })
       .addTo(_xyz.map);
+    **/
 
     function marker(latlng, layer, point, param){
 
+      return param;
+
+      /**
       param.icon = _xyz.utils.svg_symbols(param.marker);
 
       // Define iconSize base on the point size in relation to the max_size.
       let iconSize = layer.cluster_logscale ?
-        point.properties.count === 1 ?
+        point.get('properties').count === 1 ?
           layer.style.markerMin :
-          layer.style.markerMin + layer.style.markerMax / Math.log(param.max_size) * Math.log(point.properties.size) :
-        point.properties.count === 1 ?
+          layer.style.markerMin + layer.style.markerMax / Math.log(param.max_size) * Math.log(point.get('properties').size) :
+        point.get('properties').count === 1 ?
           layer.style.markerMin :
-          layer.style.markerMin + layer.style.markerMax / param.max_size * point.properties.size;
+          layer.style.markerMin + layer.style.markerMax / param.max_size * point.get('properties').size;
 
+      // return new _xyz.ol.geom.Point(_xyz.ol.proj.fromLonLat(latlng));
       return _xyz.L.marker(latlng, {
         pane: layer.key,
         // offset base on size draws bigger cluster first.
-        zIndexOffset: parseInt(1000 - 1000 / param.max_size * point.properties.size),
+        zIndexOffset: parseInt(1000 - 1000 / param.max_size * point.get('properties').size),
         icon: _xyz.L.icon({
           iconUrl: param.icon,
           iconSize: iconSize
         }),
         interactive: (layer.qID) ? true : false
       });
+      **/
     }
 
   };

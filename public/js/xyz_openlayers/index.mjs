@@ -15,6 +15,7 @@ import * as format from 'ol/format';
 import * as layer from 'ol/layer';
 import * as interaction from 'ol/interaction';
 import * as condition from 'ol/events/condition';
+import * as geom from 'ol/geom';
 
 import * as utils from '../utils/_utils.mjs';
 
@@ -59,6 +60,7 @@ export default () => {
   _xyz.ol.layer = layer;
   _xyz.ol.interaction = interaction;
   _xyz.ol.condition = condition;
+  _xyz.ol.geom = geom;
 
   _xyz.utils = utils;
 
