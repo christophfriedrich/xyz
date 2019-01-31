@@ -14,7 +14,9 @@ export default (_xyz, layer) => () => {
     _xyz.host + '/proxy/request?uri=' + layer.URI + '&token=' + _xyz.token :
     layer.URI;
 
-    // Assign the tile layer to the layer L object and add to map.
+  uri = uri.replace('{s}', '{a-c}');
+
+  // Assign the tile layer to the layer L object and add to map.
   layer.L = new _xyz.ol.layer.Tile({
     source: new _xyz.ol.source.XYZ({url: uri})
   });
