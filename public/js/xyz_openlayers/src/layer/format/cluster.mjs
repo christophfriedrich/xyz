@@ -78,7 +78,7 @@ export default (_xyz, layer) => () => {
         cluster.reduce((max_size, f) => Math.max(max_size, f.properties.size), 0)
     };
 
-      // Create cat array for graduated theme.
+    // Create cat array for graduated theme.
     if (layer.style.theme && layer.style.theme.type === 'graduated') {
       layer.style.theme.cat_arr = Object.entries(layer.style.theme.cat).sort((a, b) => parseFloat(a[0]) - parseFloat(b[0]));
     }
@@ -94,95 +94,88 @@ export default (_xyz, layer) => () => {
     });
     _xyz.map.addLayer(layer.L);
 
-    /**
-    layer.L = _xyz.L.geoJson(cluster, {
-      pointToLayer: (point, latlng) => {
-      **/
-        
-    let applyMarkerStyle = (point) => {
-      {
-        const latlng = undefined;  // dummy
-        param.marker = layer.style.marker;
 
-        // Set tooltip for desktop if corresponding layer has hover property.
-        // let tooltip = (layer.style.theme && layer.style.theme.hover && _xyz.view.mode === 'desktop') || false;
+    // Function to get the marker's style
+    let applyMarkerStyle = (feature) => {
+      param.marker = layer.style.marker;
 
-        if(point.get('properties').size > 1) param.marker = layer.style.markerMulti;
+      // Set tooltip for desktop if corresponding layer has hover property.
+      // let tooltip = (layer.style.theme && layer.style.theme.hover && _xyz.view.mode === 'desktop') || false;
 
-        // Return marker if no theme is set.
-        if (!layer.style.theme) return marker(latlng, layer, point, param);
+      if(feature.get('properties').size > 1) param.marker = layer.style.markerMulti;
+
+      // Return marker if no theme is set.
+      if (!layer.style.theme) return marker(layer, feature, param);
 
 
-        // Categorized theme
-        if (layer.style.theme.type === 'categorized') {
+      // Categorized theme
+      if (layer.style.theme.type === 'categorized') {
 
-          // Get cat style from theme if cat is defined.
-          param.cat_style = layer.style.theme.cat[point.get('properties').cat] || {};
+        // Get cat style from theme if cat is defined.
+        param.cat_style = layer.style.theme.cat[feature.get('properties').cat] || {};
 
-          // Assign marker from base & cat_style.
-          param.marker = Object.assign({}, param.marker, param.cat_style);
+        // Assign marker from base & cat_style.
+        param.marker = Object.assign({}, param.marker, param.cat_style);
 
-          return marker(latlng, layer, point, param);
-        }
+        return marker(layer, feature, param);
+      }
 
-        // Graduated theme.
-        if (layer.style.theme.type === 'graduated') {
+      // Graduated theme.
+      if (layer.style.theme.type === 'graduated') {
 
-          param.cat_style = {};
-    
-          // Iterate through cat array.
-          for (let i = 0; i < layer.style.theme.cat_arr.length; i++) {
-    
-            // Break iteration is cat value is below current cat array value.
-            if (point.get('properties').cat < parseFloat(layer.style.theme.cat_arr[i][0])) break;
-    
-            // Set cat_style to current cat style after value check.
-            param.cat_style = layer.style.theme.cat_arr[i][1];
-          }
+        param.cat_style = {};
   
-          // Assign marker from base & cat_style.
-          param.marker = Object.assign({}, param.marker, param.cat_style);
-
-          return marker(latlng, layer, point, param);
+        // Iterate through cat array.
+        for (let i = 0; i < layer.style.theme.cat_arr.length; i++) {
+  
+          // Break iteration if cat value is below current cat array value.
+          if (feature.get('properties').cat < parseFloat(layer.style.theme.cat_arr[i][0])) break;
+  
+          // Set cat_style to current cat style after value check.
+          param.cat_style = layer.style.theme.cat_arr[i][1];
         }
 
+        // Assign marker from base & cat_style.
+        param.marker = Object.assign({}, param.marker, param.cat_style);
 
-        // Competition theme.
-        if (layer.style.theme.type === 'competition') {
+        return marker(layer, feature, param);
+      }
 
-          // Set counter for point to 0.
-          let size = point.get('properties').size;
 
-          // Create a new cat_style with an empty layers object to store the competition layers.
-          param.cat_style = {
-            layers: {}
-          };
+      // Competition theme.
+      if (layer.style.theme.type === 'competition') {
 
-          // Iterate through cats in competition theme.
-          //Object.keys(point.get('properties').cat).forEach(comp => {
-          Object.entries(point.get('properties').cat).sort((a, b) => a[1] - b[1]).forEach(comp => {
+        // Set counter for feature to 0.
+        let size = feature.get('properties').size;
 
-            // Check for the competition cat in point properties.
-            if (layer.style.theme.cat[comp[0]]) {
-              
-              // Add a cat layer to the marker obkject.
-              // Calculate the size of the competition layer.
-              // Competition layer added first must be largest.
-              param.cat_style.layers[size / point.get('properties').size] = layer.style.theme.cat[comp[0]].fillColor;
+        // Create a new cat_style with an empty layers object to store the competition layers.
+        param.cat_style = {
+          layers: {}
+        };
 
-            }
+        // Iterate through cats in competition theme.
+        //Object.keys(feature.get('properties').cat).forEach(comp => {
+        Object.entries(feature.get('properties').cat).sort((a, b) => a[1] - b[1]).forEach(comp => {
+
+          // Check for the competition cat in feature properties.
+          if (layer.style.theme.cat[comp[0]]) {
             
-            // Reduce the current size by the size of layer just added to marker.
-            size -= comp[1];
+            // Add a cat layer to the marker object.
+            // Calculate the size of the competition layer.
+            // Competition layer added first must be largest.
+            param.cat_style.layers[size / feature.get('properties').size] = layer.style.theme.cat[comp[0]].fillColor;
 
-          });
+          }
+          
+          // Reduce the current size by the size of layer just added to marker.
+          size -= comp[1];
 
-          // Assign marker from base & cat_style.
-          param.marker = Object.assign({}, param.marker, param.cat_style);
+        });
 
-          return marker(latlng, layer, point, param);
-        }
-            
+        // Assign marker from base & cat_style.
+        param.marker = Object.assign({}, param.marker, param.cat_style);
+
+        return marker(layer, feature, param);
       }
     };
 
@@ -231,27 +224,27 @@ export default (_xyz, layer) => () => {
       .addTo(_xyz.map);
     **/
 
-    function marker(latlng, layer, point, param){
+    function marker(layer, feature, param){
 
       return param;
 
       /**
       param.icon = _xyz.utils.svg_symbols(param.marker);
 
-      // Define iconSize base on the point size in relation to the max_size.
+      // Define iconSize base on the feature size in relation to the max_size.
       let iconSize = layer.cluster_logscale ?
-        point.get('properties').count === 1 ?
+        feature.get('properties').count === 1 ?
           layer.style.markerMin :
-          layer.style.markerMin + layer.style.markerMax / Math.log(param.max_size) * Math.log(point.get('properties').size) :
-        point.get('properties').count === 1 ?
+          layer.style.markerMin + layer.style.markerMax / Math.log(param.max_size) * Math.log(feature.get('properties').size) :
+        feature.get('properties').count === 1 ?
           layer.style.markerMin :
-          layer.style.markerMin + layer.style.markerMax / param.max_size * point.get('properties').size;
+          layer.style.markerMin + layer.style.markerMax / param.max_size * feature.get('properties').size;
 
       // return new _xyz.ol.geom.Point(_xyz.ol.proj.fromLonLat(latlng));
       return _xyz.L.marker(latlng, {
         pane: layer.key,
         // offset base on size draws bigger cluster first.
-        zIndexOffset: parseInt(1000 - 1000 / param.max_size * point.get('properties').size),
+        zIndexOffset: parseInt(1000 - 1000 / param.max_size * feature.get('properties').size),
         icon: _xyz.L.icon({
           iconUrl: param.icon,
           iconSize: iconSize
