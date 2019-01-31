@@ -9,7 +9,7 @@
     },
     "locale": {
         "name": "optional",
-        "minZoom": 0,
+        "minZoom": 2,
         "maxZoom": 20,
         "bounds": {
             "north": 90,

@@ -51,10 +51,10 @@ export default _xyz => {
         view: new _xyz.ol.View({
           // Set view if defined in workspace.
           center: _xyz.ol.proj.fromLonLat([
-            _xyz.hooks.current.lng || locale.view.lng || 0,
-            _xyz.hooks.current.lat || locale.view.lat || 0
+            _xyz.hooks.current.lng || (locale.view ? locale.view.lng : undefined) || (locale.bounds.north + locale.bounds.south) / 2,
+            _xyz.hooks.current.lat || (locale.view ? locale.view.lat : undefined) || (locale.bounds.east + locale.bounds.west) / 2
           ]),
-          zoom: _xyz.hooks.current.z || locale.view.z || 5,
+          zoom: _xyz.hooks.current.z || (locale.view ? locale.view.z : undefined) || locale.minZoom,
           // Set min, max zoom and bounds.
           minZoom: locale.minZoom,
           maxZoom: locale.maxZoom,
