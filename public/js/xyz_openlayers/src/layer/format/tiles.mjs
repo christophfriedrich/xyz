@@ -22,15 +22,14 @@ export default (_xyz, layer) => () => {
   });
   _xyz.map.addLayer(layer.L);
 
+  _xyz.map.on('rendercomplete', () => {
+    if (layer.loader)  layer.loader.style.display = 'none';
+  });
+
   /**
     updateWhenIdle: true,
     pane: layer.key
   })
-    .on('load', () => {
-      
-      if (layer.loader)  layer.loader.style.display = 'none';
-
-    })
   **/
 
 };

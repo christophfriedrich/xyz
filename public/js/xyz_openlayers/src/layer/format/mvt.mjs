@@ -68,11 +68,11 @@ export default (_xyz, layer) => () => {
     .on('error', err => console.error(err))
   **/
       
-  layer.L.on('render', () => {
+  _xyz.map.on('render', () => {
     if (layer.loader) layer.loader.style.display = 'block';
   });
 
-  layer.L.on('rendercomplete', () => {
+  _xyz.map.on('rendercomplete', () => {
 
     if (layer.loader)  layer.loader.style.display = 'none';
 
@@ -81,8 +81,14 @@ export default (_xyz, layer) => () => {
     layer.loaded = true;
   });
 
+  if(layer.eventhandlers) {
+    return;
+  }
+
+  layer.eventhandlers = {};
+  
   // MVT layers don't support the normal "select" interaction, so we have to use a workaround: get the features at the clicked pixel
-  _xyz.map.on('click', event => {
+  layer.eventhandlers.mapClick = event => {
 
     // layerFilter makes sure we only search within layer.L and not any overlapping layers
     var features = _xyz.map.getFeaturesAtPixel(event.pixel, {layerFilter: candidate => candidate == layer.L});
@@ -105,28 +111,12 @@ export default (_xyz, layer) => () => {
 
     // force redraw of layer style
     layer.L.setStyle(layer.L.getStyle());
-  });
+  };
+
+  _xyz.map.on('click', layer.eventhandlers.mapClick);
 
   /**
     .on('click', e => {
-
-      if (layer.singleSelectOnly) {
-
-        layer.selected = [e.layer.properties.id];
-
-        layer.L.redraw();
-
-      } else {
-
-        let selectedIdx = layer.selected.indexOf(e.layer.properties.id);
-        
-        selectedIdx >= 0 ?
-          layer.selected.splice(selectedIdx, 1) :
-          layer.selected.push(e.layer.properties.id);
-
-      }
-
-      e.target.setFeatureStyle(e.layer.properties.id, applyLayerStyle);
 
       _xyz.locations.select({
         dbs: layer.dbs,
