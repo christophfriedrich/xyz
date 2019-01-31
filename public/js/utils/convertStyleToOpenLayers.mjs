@@ -2,9 +2,9 @@ import {Style, Fill, Stroke, Icon} from 'ol/style';
 import {hexToRGBA} from './hexToRGBA.mjs';
 import {default as svg_symbols} from './svg_symbols.mjs';
 
-export function convertStyleToOpenLayers(styleObject) {
+export function convertStyleToOpenLayers(styleObject, feature) {
   
-  if(styleObject.marker) {
+  if(styleObject.marker && feature && feature.getGeometry().getType() == 'Point') {
     const scale = (styleObject.marker.iconSize || 40) / 1000;
     return new Style({
       image: new Icon({

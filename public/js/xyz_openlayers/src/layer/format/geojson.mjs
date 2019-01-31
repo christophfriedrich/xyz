@@ -46,7 +46,7 @@ export default (_xyz, layer) => () => {
     const features = formatReader.readFeatures(geojson, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
     layer.L = new _xyz.ol.layer.Vector({
       source: new _xyz.ol.source.Vector({ features: features }),
-      style: feature => _xyz.utils.convertStyleToOpenLayers(applyLayerStyle(feature))
+      style: feature => _xyz.utils.convertStyleToOpenLayers(applyLayerStyle(feature), feature)
     });
     _xyz.map.addLayer(layer.L);
 
