@@ -43,12 +43,7 @@ export default _xyz => {
   };
 
   _xyz.locations.select_popup = location => {
-
-    _xyz.L.popup({closeButton: false})
-      .setLatLng(location.marker.reverse())
-      .setContent(location.info_table)
-      .openOn(_xyz.map);
-
+    openlayersPopup(location.marker, location.info_table);
   };
 
   _xyz.locations.select_list = (list, lnglat, layer) => {
@@ -114,14 +109,40 @@ export default _xyz => {
 
     scrolly.appendChild(ul);
 
-    // Populate leaflet popup with a html table and call scrolly to enable scrollbar.
-    _xyz.L.popup({closeButton: false})
-      .setLatLng(lnglat.reverse())
-      .setContent(scrolly)
-      .openOn(_xyz.map);
+    // Populate OpenLayers popup with a html table and call scrolly to enable scrollbar.
+    openlayersPopup(lnglat, scrolly);
 
     _xyz.utils.scrolly(scrolly);
 
+  };
+
+  let openlayersPopup = (lonlat, content) => {
+    if(!_xyz.popupOverlay) {
+      let popup = document.createElement('div');
+      popup.className = 'popup';
+      _xyz.map.getTargetElement().parentElement.insertBefore(popup, _xyz.map.getTargetElement());
+
+      var overlay = new _xyz.ol.Overlay({
+        element: popup,
+        positioning: 'top-center',
+        autoPan: true,
+        autoPanAnimation: {
+          duration: 250
+        }
+      });
+      _xyz.map.addOverlay(overlay);
+
+      _xyz.popupOverlay = overlay;
+    }
+
+    _xyz.popupOverlay.getElement().innerHTML = '';
+    if(content instanceof HTMLElement) {
+      _xyz.popupOverlay.getElement().appendChild(content);
+    } else {
+      _xyz.popupOverlay.getElement().innerHTML = content;
+    }
+
+    _xyz.popupOverlay.setPosition(_xyz.ol.proj.fromLonLat(lonlat, 'EPSG:3857'));
   };
 
 };
