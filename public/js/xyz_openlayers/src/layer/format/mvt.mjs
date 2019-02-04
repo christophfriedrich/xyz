@@ -109,6 +109,17 @@ export default (_xyz, layer) => () => {
       }
     }
 
+    _xyz.locations.select({
+      dbs: layer.dbs,
+      locale: layer.locale,
+      layer: layer.key,
+      table: layer.table,
+      qID: layer.qID,
+      id: id,
+      marker: _xyz.ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326'),
+      edit: layer.edit
+    });
+
     // force redraw of layer style
     layer.L.setStyle(layer.L.getStyle());
   };
@@ -116,20 +127,6 @@ export default (_xyz, layer) => () => {
   _xyz.map.on('click', layer.eventhandlers.mapClick);
 
   /**
-    .on('click', e => {
-
-      _xyz.locations.select({
-        dbs: layer.dbs,
-        locale: layer.locale,
-        layer: layer.key,
-        table: layer.table,
-        qID: layer.qID,
-        id: e.layer.properties.id,
-        marker: [e.latlng.lng.toFixed(5), e.latlng.lat.toFixed(5)],
-        edit: layer.edit
-      });
-
-    })
     .on('mouseover', e => {
       e.target.setFeatureStyle(e.layer.properties.id, layer.style.highlight);
     })

@@ -71,52 +71,49 @@ export default (_xyz, layer) => () => {
     })
     **/
 
-    /**
-      .on('click', e => {
+    if(layer.eventhandlers) {
+      return;
+    }
 
-        const id = e.layer.feature.properties.id;
+    layer.eventhandlers = {};
+    
+    layer.eventhandlers.mapClick = e => {
+      {
+        // layerFilter makes sure we only search within layer.L and not any overlapping layers
+        var features = _xyz.map.getFeaturesAtPixel(e.pixel, {layerFilter: candidate => candidate == layer.L});
+        
+        if (!features) {
+          return;
+        }
+        
+        const id = features[0].get('id');
 
         if (layer.singleSelectOnly) {
-
-          layer.L.getLayers().forEach(l => {
-            l.setIcon && l.setIcon(_xyz.L.icon({
-              iconUrl: _xyz.utils.svg_symbols(layer.style.default.marker),
-              iconSize: layer.style.default.marker.iconSize || 40,
-              iconAnchor: layer.style.default.marker.iconAnchor || [20,20]
-            }));
-          });
-
           layer.selected = new Set([id]);
-
         } else {
-
           if(layer.selected.has(id)) {
             layer.selected.delete(id);
           } else {
             layer.selected.add(id);
           }
-
         }
-          
-        let style = applyLayerStyle(e.layer.feature);
-
-        e.layer.setStyle && e.layer.setStyle(style);
-          
-        e.layer.setIcon && e.layer.setIcon(_xyz.L.icon({
-          iconUrl: _xyz.utils.svg_symbols(style.marker),
-          iconSize: style.marker.iconSize || 40,
-          iconAnchor: style.marker.iconAnchor || [20,20]
-        }));
           
         _xyz.locations.select({
           layer: layer.key,
           table: layer.table,
-          id: e.layer.feature.properties.id,
-          marker: [e.latlng.lng.toFixed(5), e.latlng.lat.toFixed(5)],
+          id: id,
+          marker: _xyz.ol.proj.transform(e.coordinate, 'EPSG:3857', 'EPSG:4326'),
           edit: layer.edit
         });
-          
-      })
+
+        // force redraw of layer style
+        layer.L.setStyle(layer.L.getStyle());
+      }
+    };
+
+    _xyz.map.on('click', layer.eventhandlers.mapClick);
+      
+    /**
       .on('mouseover', e => {
         e.layer.setStyle && e.layer.setStyle(layer.style.highlight);
       })
