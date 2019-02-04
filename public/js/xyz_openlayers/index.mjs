@@ -2,6 +2,7 @@ import _xyz_instance from '../_xyz.mjs';
 
 import Map from 'ol/Map';
 import View from 'ol/View';
+import Overlay from 'ol/Overlay';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import {defaults} from 'ol/interaction';
@@ -47,6 +48,7 @@ export default () => {
   _xyz.ol = {};
   _xyz.ol.Map = Map;
   _xyz.ol.View = View;
+  _xyz.ol.Overlay = Overlay;
   _xyz.ol.TileLayer = TileLayer;
   _xyz.ol.XYZ = XYZ;
   _xyz.ol.interactionDefaults = defaults;

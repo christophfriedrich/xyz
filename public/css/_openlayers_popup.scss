@@ -1,0 +1,32 @@
+/* main popup */
+.popup {
+  position: absolute;
+  bottom: 0px;  /* above its coordinate position */
+  left: -30px;  /* tip 30px from left border */
+  margin-bottom: 45px;   /* to be above icon (standard icon size is 40px) */
+  background-color: white;
+  padding: 5px;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4)   /* "3D effect" */
+}
+/* tip of popup, see https://openlayers.org/en/latest/examples/popup.html */
+.popup:after, .popup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.popup:after {  /* white part of tip */
+  border-top-color: white;
+  border-width: 10px;
+  left: 30px;
+  margin-left: -10px;
+}
+.popup:before {  /* pseudo-shadow for tip */
+  border-top-color: #cccccc;
+  border-width: 11px;
+  left: 30px;
+  margin-left: -11px;
+}
