@@ -78,37 +78,35 @@ export default (_xyz, layer) => () => {
     layer.eventhandlers = {};
     
     layer.eventhandlers.mapClick = e => {
-      {
-        // layerFilter makes sure we only search within layer.L and not any overlapping layers
-        var features = _xyz.map.getFeaturesAtPixel(e.pixel, {layerFilter: candidate => candidate == layer.L});
-        
-        if (!features) {
-          return;
-        }
-        
-        const id = features[0].get('id');
-
-        if (layer.singleSelectOnly) {
-          layer.selected = new Set([id]);
-        } else {
-          if(layer.selected.has(id)) {
-            layer.selected.delete(id);
-          } else {
-            layer.selected.add(id);
-          }
-        }
-          
-        _xyz.locations.select({
-          layer: layer.key,
-          table: layer.table,
-          id: id,
-          marker: _xyz.ol.proj.transform(e.coordinate, 'EPSG:3857', 'EPSG:4326'),
-          edit: layer.edit
-        });
-
-        // force redraw of layer style
-        layer.L.setStyle(layer.L.getStyle());
+      // layerFilter makes sure we only search within layer.L and not any overlapping layers
+      var features = _xyz.map.getFeaturesAtPixel(e.pixel, {layerFilter: candidate => candidate == layer.L});
+      
+      if (!features) {
+        return;
       }
+      
+      const id = features[0].get('id');
+
+      if (layer.singleSelectOnly) {
+        layer.selected = new Set([id]);
+      } else {
+        if(layer.selected.has(id)) {
+          layer.selected.delete(id);
+        } else {
+          layer.selected.add(id);
+        }
+      }
+        
+      _xyz.locations.select({
+        layer: layer.key,
+        table: layer.table,
+        id: id,
+        marker: _xyz.ol.proj.transform(e.coordinate, 'EPSG:3857', 'EPSG:4326'),
+        edit: layer.edit
+      });
+
+      // force redraw of layer style
+      layer.L.setStyle(layer.L.getStyle());
     };
 
     _xyz.map.on('click', layer.eventhandlers.mapClick);
