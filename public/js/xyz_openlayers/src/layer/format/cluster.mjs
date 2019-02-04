@@ -179,11 +179,23 @@ export default (_xyz, layer) => () => {
       }
     };
 
-    /**
-      .on('click', e => {
+    if(layer.eventhandlers) {
+      return;
+    }
+  
+    layer.eventhandlers = {};
+    
+    layer.eventhandlers.mapClick = e => {
+      {
+        var features = _xyz.map.getFeaturesAtPixel(e.pixel, {layerFilter: candidate => candidate == layer.L});
+    
+        if (!features) {
+          return;
+        }
+
         let
-          count = e.layer.feature.properties.count,
-          lnglat = e.layer.feature.geometry.coordinates;
+          count = features[0].get('properties').count,
+          lnglat = _xyz.ol.proj.transform(features[0].getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
     
         const xhr = new XMLHttpRequest();
       
@@ -220,9 +232,11 @@ export default (_xyz, layer) => () => {
         };
       
         xhr.send();
-      })
-      .addTo(_xyz.map);
-    **/
+      }
+    };
+
+    _xyz.map.on('click', layer.eventhandlers.mapClick);
+
 
     function marker(layer, feature, param){
 

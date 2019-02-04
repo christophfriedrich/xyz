@@ -28,9 +28,9 @@ import attribution from './src/attribution.mjs';
 
 import _layer from './src/layer/_layer.mjs';
 
-/**
 import _location from './src/location/_location.mjs';
 
+/**
 import _draw from './src/draw/_draw.mjs';
 **/
 
@@ -73,10 +73,10 @@ export default () => {
   getWorkspace(_xyz);
 
   _layer(_xyz);
-  /**
 
   _location(_xyz);
 
+  /**
   _draw(_xyz);
   **/
 
