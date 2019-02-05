@@ -147,7 +147,7 @@ export default (_xyz, layer) => () => {
     // Categorized theme.
     if (theme.type === 'categorized') {
 
-      return Object.assign({}, style, theme.cat[properties[theme.field]] || {});
+      return Object.assign({}, style, theme.cat[properties.get(theme.field)] || {});
 
     }
 
@@ -159,10 +159,10 @@ export default (_xyz, layer) => () => {
       // Iterate through cat array.
       for (let i = 0; i < theme.cat_arr.length; i++) {
 
-        if (!properties[theme.field]) return style;
+        if (!properties.get(theme.field)) return style;
 
         // Break iteration is cat value is below current cat array value.
-        if (parseFloat(properties[theme.field]) < parseFloat(theme.cat_arr[i][0])) break;
+        if (parseFloat(properties.get(theme.field)) < parseFloat(theme.cat_arr[i][0])) break;
 
         // Set cat_style to current cat style after value check.
         theme.cat_style = theme.cat_arr[i][1];
