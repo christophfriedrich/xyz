@@ -13,7 +13,8 @@ export function convertStyleToOpenLayers(styleObject, feature) {
         anchor: (styleObject.marker.iconAnchor || [20, 40]).map(x => x/scale),
         anchorXUnits: 'pixels',
         anchorYUnits: 'pixels'
-      })
+      }),
+      zIndex: styleObject.zIndex
     });
   }
 
@@ -24,7 +25,8 @@ export function convertStyleToOpenLayers(styleObject, feature) {
     stroke: styleObject.stroke === false ? undefined : new Stroke({
       color: hexToRGBA(styleObject.color, 1, true),
       width: styleObject.weight
-    })
+    }),
+    zIndex: styleObject.zIndex
   });
     
 }

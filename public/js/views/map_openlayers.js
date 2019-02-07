@@ -132,7 +132,7 @@ function mvt_select2(_xyz) {
 
   _xyz.layers.list.COUNTRIES.singleSelectOnly = true;
 
-  _xyz.layers.list.COUNTRIES.style.theme = null;
+  //_xyz.layers.list.COUNTRIES.style.theme = null;
 
   _xyz.layers.list.COUNTRIES.show();
 

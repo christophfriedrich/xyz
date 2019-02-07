@@ -71,12 +71,20 @@ export default (_xyz, layer) => () => {
     })
     **/
 
+    // if layer isn't selectable, we don't need hover and click events
+    if(layer.qID == undefined) {
+      return;
+    }
+
+    // if event handlers are already defined, we shouldn't do that again
     if(layer.eventhandlers) {
       return;
     }
 
+    // init object
     layer.eventhandlers = {};
     
+    // define click handler
     layer.eventhandlers.mapClick = e => {
       // layerFilter makes sure we only search within layer.L and not any overlapping layers
       var features = _xyz.map.getFeaturesAtPixel(e.pixel, {layerFilter: candidate => candidate == layer.L});
@@ -109,7 +117,21 @@ export default (_xyz, layer) => () => {
       layer.L.setStyle(layer.L.getStyle());
     };
 
+    // event needs to be on the MAP, not the layer
     _xyz.map.on('click', layer.eventhandlers.mapClick);
+
+    layer.eventhandlers.mapPointermove = event => {
+      const previous = layer.highlighted;
+      const features = _xyz.map.getFeaturesAtPixel(event.pixel, {layerFilter: candidate => candidate == layer.L});
+      layer.highlighted = (!features ? null : features[0].get('id'));
+      
+      if(layer.highlighted !== previous) {
+        // force redraw of layer style
+        layer.L.setStyle(layer.L.getStyle());
+      }
+    };
+
+    _xyz.map.on('pointermove', layer.eventhandlers.mapPointermove);
       
     /**
       .on('mouseover', e => {
@@ -130,7 +152,18 @@ export default (_xyz, layer) => () => {
   
   function applyLayerStyle(feature){
 
-    let style = Object.assign({}, layer.style.default, layer.selected.has(feature.get('id')) ? layer.style.selected : {});
+    const highlighted = (layer.highlighted === feature.get('id'));
+    const selected = layer.selected.has(feature.get('id'));
+
+    let style = Object.assign(
+      {},
+      layer.style.default,
+      highlighted ? layer.style.highlight : {},
+      selected ? layer.style.selected : {},
+      selected && highlighted ? layer.style.highlight : {}
+    );
+
+    style.zIndex = (highlighted && selected ? 40 : (highlighted ? 30 : (selected ? 20 : 10)));
 
     // Return default style if no theme is set on layer.
     if (!layer.style.theme) return style;

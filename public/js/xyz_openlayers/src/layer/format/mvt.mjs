@@ -81,10 +81,17 @@ export default (_xyz, layer) => () => {
     layer.loaded = true;
   });
 
+  // if layer isn't selectable, we don't need hover and click events
+  if(layer.qID == undefined) {
+    return;
+  }
+
+  // if event handlers are already defined, we shouldn't do that again
   if(layer.eventhandlers) {
     return;
   }
 
+  // init object
   layer.eventhandlers = {};
   
   // MVT layers don't support the normal "select" interaction, so we have to use a workaround: get the features at the clicked pixel
@@ -126,6 +133,19 @@ export default (_xyz, layer) => () => {
 
   _xyz.map.on('click', layer.eventhandlers.mapClick);
 
+  layer.eventhandlers.mapPointermove = event => {
+    const previous = layer.highlighted;
+    const features = _xyz.map.getFeaturesAtPixel(event.pixel, {layerFilter: candidate => candidate == layer.L});
+    layer.highlighted = (!features ? null : features[0].get('id'));
+    
+    if(layer.highlighted !== previous) {
+      // force redraw of layer style
+      layer.L.setStyle(layer.L.getStyle());
+    }
+  };
+
+  _xyz.map.on('pointermove', layer.eventhandlers.mapPointermove);
+
   /**
     .on('mouseover', e => {
       e.target.setFeatureStyle(e.layer.properties.id, layer.style.highlight);
@@ -137,7 +157,18 @@ export default (_xyz, layer) => () => {
 
   function applyLayerStyle(properties) {
 
-    let style = Object.assign({}, layer.style.default, layer.selected.has(properties.get('id')) ? layer.style.selected : {});
+    const highlighted = layer.highlighted === properties.get('id');
+    const selected = layer.selected.has(properties.get('id'));
+
+    let style = Object.assign(
+      {},
+      layer.style.default,
+      highlighted ? layer.style.highlight : {},
+      selected ? layer.style.selected : {},
+      selected && highlighted ? layer.style.highlight : {}
+    );
+
+    style.zIndex = (highlighted && selected ? 40 : (highlighted ? 30 : (selected ? 20 : 10)));
 
     // Return default style if no theme is set on layer.
     if (!layer.style.theme) return style;
