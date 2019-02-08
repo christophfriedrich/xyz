@@ -136,7 +136,10 @@ export default (_xyz, layer) => () => {
   layer.eventhandlers.mapPointermove = event => {
     const previous = layer.highlighted;
     const features = _xyz.map.getFeaturesAtPixel(event.pixel, {layerFilter: candidate => candidate == layer.L});
-    layer.highlighted = (!features ? null : features[0].get('id'));
+    const toBeHighlighted = features != null && event.originalEvent.target.tagName == 'CANVAS';  // any features detected and directly under cursor?
+
+    layer.highlighted = (toBeHighlighted ? features[0].get('id') : null);
+    _xyz.map.getTargetElement().style.cursor = (toBeHighlighted ? 'pointer' : '');
     
     if(layer.highlighted !== previous) {
       // force redraw of layer style
