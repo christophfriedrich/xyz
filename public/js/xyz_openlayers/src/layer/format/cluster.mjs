@@ -237,6 +237,22 @@ export default (_xyz, layer) => () => {
 
     _xyz.map.on('click', layer.eventhandlers.mapClick);
 
+    layer.eventhandlers.mapPointermove = event => {
+      const previous = layer.highlighted;
+      const features = _xyz.map.getFeaturesAtPixel(event.pixel, {layerFilter: candidate => candidate == layer.L});
+      const toBeHighlighted = features != null && event.originalEvent.target.tagName == 'CANVAS';  // any features detected and directly under cursor?
+
+      layer.highlighted = (toBeHighlighted ? features[0].get('id') : null);
+      _xyz.map.getTargetElement().style.cursor = (toBeHighlighted ? 'pointer' : '');
+      
+      if(layer.highlighted !== previous) {
+        // force redraw of layer style
+        layer.L.setStyle(layer.L.getStyle());
+      }
+    };
+
+    _xyz.map.on('pointermove', layer.eventhandlers.mapPointermove);
+
 
     function marker(layer, feature, param){
 
