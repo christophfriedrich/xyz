@@ -82,7 +82,7 @@ export default _xyz => {
         const worldWithHole = new _xyz.ol.Polygon([world, bbox]).transform('EPSG:4326', 'EPSG:3857');
         const feature = new _xyz.ol.Feature(worldWithHole);
         const source = new _xyz.ol.source.Vector({ features: [feature] });
-        const layer = new _xyz.ol.layer.Vector({ source: source, style: style });
+        const layer = new _xyz.ol.layer.Vector({ source: source, style: style, zIndex: 200 });
         _xyz.map.addLayer(layer);
       }
 
