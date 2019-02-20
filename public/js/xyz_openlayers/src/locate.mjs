@@ -8,29 +8,42 @@ export default _xyz => {
 
     let flyTo = true;
 
-    // Create the geolocation marker if it doesn't exist yet.
+    // Create the geolocation marker and its layer if it doesn't exist yet.
     if (!_xyz.locate.L) {
-      _xyz.locate.L = _xyz.L.marker([0, 0], {
-        interactive: false,
-        icon: _xyz.L.icon({
-          iconUrl: _xyz.utils.svg_symbols({type: 'geo'}),
+      var geolocationMarker = new _xyz.ol.Feature({
+        geometry: new _xyz.ol.geom.Point([0, 0])  // For now, initialise at coordinates [0,0]
+      });
+      geolocationMarker.setStyle(_xyz.utils.convertStyleToOpenLayers({marker: {type: 'geo'} }, geolocationMarker));
+
+      /**
           iconSize: 30
-        })
+      **/
+
+      _xyz.locate.L = new _xyz.ol.layer.Vector({
+        source: new _xyz.ol.source.Vector({
+          features: [geolocationMarker]
+        }),
+        zindex: 100
       });
     }
 
     // Remove the geolocation marker if _xyz.locate is not active.
     if (!_xyz.locate.active) return _xyz.map.removeLayer(_xyz.locate.L);
+
+    var marker = _xyz.locate.L.getSource().getFeatures()[0].getGeometry();
+    var coords = marker.getCoordinates();
         
     // Add the geolocation marker if the latitude is not 0.
-    if (_xyz.locate.L.getLatLng().lat !== 0) {
-      _xyz.locate.L.addTo(_xyz.map);
+    if (coords[1] !== 0) {
+      _xyz.map.addLayer(_xyz.locate.L);
 
       // Fly to marker location and set flyto to false to prevent map tracking.
-      if (flyTo) _xyz.map.flyTo(
-        _xyz.locate.L.getLatLng(),
-        _xyz.ws.locales[_xyz.locale].maxZoom);
-
+      if (flyTo) {
+        _xyz.map.getView().animate(
+          { center: coords },
+          { zoom: _xyz.ws.locales[_xyz.locale].maxZoom }
+        );
+      }
       flyTo = false;
     }
 
@@ -48,12 +61,18 @@ export default _xyz => {
           // Reposition marker if _xyz.locate is active
           if (_xyz.locate.active) {
             let pos_ll = [parseFloat(pos.coords.latitude), parseFloat(pos.coords.longitude)];
+            let pos_ol = _xyz.ol.proj.fromLonLat(pos_ll.reverse());
             _xyz.map.removeLayer(_xyz.locate.L);
-            _xyz.locate.L.setLatLng(pos_ll);
-            _xyz.locate.L.addTo(_xyz.map);
+            marker.setCoordinates(pos_ol);
+            _xyz.map.addLayer(_xyz.locate.L);
 
             // Fly to pos_ll and set flyTo to false to prevent map tracking.
-            if (flyTo) _xyz.map.flyTo(pos_ll, _xyz.ws.locales[_xyz.locale].maxZoom);
+            if (flyTo) {
+              _xyz.map.getView().animate(
+                { center: pos_ol },
+                { zoom: _xyz.ws.locales[_xyz.locale].maxZoom }
+              );
+            }
             flyTo = false;
           }
         },

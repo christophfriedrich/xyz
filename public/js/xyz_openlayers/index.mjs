@@ -36,9 +36,8 @@ import _draw from './src/draw/_draw.mjs';
 
 import loadLocale from './src/loadLocale.mjs';
 
-/**
 import locate from './src/locate.mjs';
-**/
+
 import init from './src/init.mjs';
 
 export default () => {
@@ -82,9 +81,8 @@ export default () => {
 
   loadLocale(_xyz);
 
-  /**
   locate(_xyz);
-  */
+
   init(_xyz);
 
   return _xyz;

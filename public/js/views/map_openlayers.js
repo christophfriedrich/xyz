@@ -8,6 +8,7 @@ _xyz().init({
   map_id: 'xyz_map1',
   locale: 'GB',
   scrollWheelZoom: true,
+  locate: {},
   view: {
     lat: 51.5073,
     lng: -0.12755,
@@ -25,6 +26,7 @@ _xyz().init({
   maskBounds: true,
   btnZoomIn: document.getElementById('btnZoomIn1'),
   btnZoomOut: document.getElementById('btnZoomOut1'),
+  btnLocate: document.getElementById('btnLocate1'),
   callback: Grid
 });
 
