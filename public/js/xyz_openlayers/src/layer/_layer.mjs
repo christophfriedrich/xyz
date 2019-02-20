@@ -176,7 +176,7 @@ export default _xyz => {
         icon: _xyz.L.icon({
           iconUrl: params.icon.url,
           iconSize: params.icon.size || 40,
-          iconAnchor: params.icon.anchor || [20, 40]
+          iconAnchor: params.icon.anchor || [20, 40]  // should be [0.5, 1] for OpenLayers
         })
       }),
       style: params.style || {}

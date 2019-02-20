@@ -5,14 +5,19 @@ import {default as svg_symbols} from './svg_symbols.mjs';
 export function convertStyleToOpenLayers(styleObject, feature) {
   
   if(styleObject.marker && feature && feature.getGeometry().getType() == 'Point') {
-    const scale = (styleObject.marker.iconSize || 40) / 1000;
+    const src = styleObject.icon;
+    
+    const svgHeight = src.match(/height%3D%22(\d+)%22/);
+    const iconHeight = svgHeight != null && Array.isArray(svgHeight) && svgHeight.length == 2 ? svgHeight[1] : 1000;
+    const scale = (styleObject.iconSize || 40) / iconHeight;
+
+    const anchor = (styleObject.marker.iconAnchor || [0.5, 1]);
+
     return new Style({
       image: new Icon({
-        src: svg_symbols(styleObject.marker),
+        src: src,
         scale: scale,
-        anchor: (styleObject.marker.iconAnchor || [20, 40]).map(x => x/scale),
-        anchorXUnits: 'pixels',
-        anchorYUnits: 'pixels'
+        anchor: anchor,
       }),
       zIndex: styleObject.zIndex
     });

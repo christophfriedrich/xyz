@@ -256,13 +256,10 @@ export default (_xyz, layer) => () => {
 
     function marker(layer, feature, param){
 
-      return param;
-
-      /**
       param.icon = _xyz.utils.svg_symbols(param.marker);
 
       // Define iconSize base on the feature size in relation to the max_size.
-      let iconSize = layer.cluster_logscale ?
+      param.iconSize = layer.cluster_logscale ?
         feature.get('properties').count === 1 ?
           layer.style.markerMin :
           layer.style.markerMin + layer.style.markerMax / Math.log(param.max_size) * Math.log(feature.get('properties').size) :
@@ -270,15 +267,18 @@ export default (_xyz, layer) => () => {
           layer.style.markerMin :
           layer.style.markerMin + layer.style.markerMax / param.max_size * feature.get('properties').size;
 
+      param.marker.iconAnchor = param.marker.iconAnchor || [0.5, 0.5];
+      
+      // offset base on size draws bigger cluster first.
+      const zIndexOffset = parseInt(1000 - 1000 / param.max_size * feature.get('properties').size);
+      param.zIndex = (param.zIndex || 10) + zIndexOffset;
+
+      return param;
+      
+      /**
       // return new _xyz.ol.geom.Point(_xyz.ol.proj.fromLonLat(latlng));
       return _xyz.L.marker(latlng, {
         pane: layer.key,
-        // offset base on size draws bigger cluster first.
-        zIndexOffset: parseInt(1000 - 1000 / param.max_size * feature.get('properties').size),
-        icon: _xyz.L.icon({
-          iconUrl: param.icon,
-          iconSize: iconSize
-        }),
         interactive: (layer.qID) ? true : false
       });
       **/

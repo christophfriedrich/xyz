@@ -62,7 +62,7 @@ export default (_xyz, layer) => () => {
           icon: _xyz.L.icon({
             iconUrl: _xyz.utils.svg_symbols(style.marker),
             iconSize: style.marker.iconSize || 40,
-            iconAnchor: style.marker.iconAnchor || [20,20]
+            iconAnchor: style.marker.iconAnchor || [20,20]  // should be [0.5, 0.5] for OpenLayers
           }),
           interactive: (layer.qID) ? true : false
         });

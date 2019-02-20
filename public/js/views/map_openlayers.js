@@ -6,7 +6,7 @@ _xyz().init({
   host: document.head.dataset.dir,
   //token: API token,
   map_id: 'xyz_map1',
-  locale: 'GB',
+  locale: 'London',
   scrollWheelZoom: true,
   locate: {},
   view: {
@@ -20,7 +20,7 @@ _xyz().init({
     south: 51.28,
     west: -0.489
   },
-  minZoom: 10,
+  minZoom: 5,
   maxZoom: 17,
   showScaleBar: true,
   maskBounds: true,
@@ -46,7 +46,7 @@ _xyz().init({
   host: document.head.dataset.dir,
   //token: API token,
   map_id: 'xyz_map2',
-  locale: 'NE',
+  locale: 'GB',
   scrollWheelZoom: true,
   btnZoomIn: document.getElementById('btnZoomIn2'),
   btnZoomOut: document.getElementById('btnZoomOut2'),
