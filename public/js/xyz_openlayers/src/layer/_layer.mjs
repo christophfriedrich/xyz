@@ -156,7 +156,7 @@ export default _xyz => {
     });
     var vectorLayer = new _xyz.ol.layer.Vector({
       source: vectorSource,
-      style: params.style
+      style: params.style || {}
     });
     _xyz.map.addLayer(vectorLayer);
 
@@ -164,8 +164,7 @@ export default _xyz => {
     if (!params.icon) return _xyz.L.geoJson(params.json, {
       interactive: params.interactive || false,
       pane: params.pane || 'default',
-      style: params.style || {}
-    }).addTo(_xyz.map);
+    });
 
     return _xyz.L.geoJson(params.json, {
       interactive: params.interactive || false,
@@ -179,8 +178,7 @@ export default _xyz => {
           iconAnchor: params.icon.anchor || [20, 40]  // should be [0.5, 1] for OpenLayers
         })
       }),
-      style: params.style || {}
-    }).addTo(_xyz.map);
+    });
     **/
 
   };

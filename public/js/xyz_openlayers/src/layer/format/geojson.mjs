@@ -52,7 +52,6 @@ export default (_xyz, layer) => () => {
 
     /**
       pane: layer.key,
-      interactive: layer.qID ? true : false,
       pointToLayer: (point, latlng) => {
           
         let style = applyLayerStyle(point);
@@ -136,15 +135,6 @@ export default (_xyz, layer) => () => {
 
     _xyz.map.on('pointermove', layer.eventhandlers.mapPointermove);
       
-    /**
-      .on('mouseover', e => {
-        e.layer.setStyle && e.layer.setStyle(layer.style.highlight);
-      })
-      .on('mouseout', e => {
-        e.layer.setStyle && e.layer.setStyle(applyLayerStyle(e.layer.feature));
-      })
-    **/
-          
     // Check whether layer.display has been set to false during the drawing process and remove layer from map if necessary.
     if (!layer.display) _xyz.map.removeLayer(layer.L);
     

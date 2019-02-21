@@ -36,14 +36,9 @@ export default (_xyz, layer) => () => {
   /**
   let options = {
     rendererFactory: _xyz.L.svg.tile,
-    interactive: (layer.qID) || false,
     pane: layer.key,
     getFeatureId: f => f.properties.id,
-    vectorTileLayerStyles: {}
   };
-
-    // set style for each layer
-  options.vectorTileLayerStyles[layer.key] = applyLayerStyle;
   **/
 
   // Create cat array for graduated theme.
@@ -148,15 +143,6 @@ export default (_xyz, layer) => () => {
   };
 
   _xyz.map.on('pointermove', layer.eventhandlers.mapPointermove);
-
-  /**
-    .on('mouseover', e => {
-      e.target.setFeatureStyle(e.layer.properties.id, layer.style.highlight);
-    })
-    .on('mouseout', e => {
-      e.target.setFeatureStyle(e.layer.properties.id, applyLayerStyle);
-    })
-  **/
 
   function applyLayerStyle(properties) {
 

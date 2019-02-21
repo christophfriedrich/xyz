@@ -27,11 +27,11 @@ export default _xyz => {
       /**
       // Remove existing Leaflet map object.
       if (_xyz.map) _xyz.map.remove();
-      */
+      **/
 
       /**
         renderer: _xyz.L.svg(),
-      */
+      **/
 
       // Set locale from params or to first in workspace.
       _xyz.locale = _xyz.hooks.current.locale || params.locale || Object.keys(_xyz.ws.locales)[0];
@@ -114,7 +114,7 @@ export default _xyz => {
       /**
       // Continue with callback if provided.
       if (params.callback) params.callback(_xyz);
-      */
+      **/
 
     };
   };
